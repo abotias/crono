@@ -8,8 +8,10 @@ import os
 track=sys.argv[1]
 now = datetime.datetime.now()
 datetoday=now.strftime("%Y%m%d")
+foundrider="0"
 
 database=sys.argv[2]+datetoday+".csv"
+rider=sys.argv[2]
 url="http://www.cronolaps.es/tiempos"
 
 
@@ -31,13 +33,23 @@ time.sleep(5)
 
 while True:
   try:
-    lastlapfull=driver.find_element("xpath",'//*[@id="tableTiempos"]/tbody/tr[1]').text.split(")")[1].strip().replace(' META','').replace(' ',';')
-    lastlap=lastlapfull.split(";")[0]
-    lap=open(database,"r").readlines()[-1].split(";")[0]
-    if lastlap > lap:
-      f = open(database,"a")
-      f.write(lastlapfull+"\n")
-      f.close()
+    if foundrider=="0":
+      riders=driver.find_element("xpath",'//*[@id="tableResultados"]').text.split("\n")
+      ridernl= [riders.index(i) for i in riders if rider in i]
+      ridern=str(ridernl[0])
+      driver.find_element("xpath",'//*[@id="tableResultados"]/tbody/tr['+ridern+']/td[3]/a').click()
+      time.sleep(2)
+      foundrider="1"
+    try:
+      lastlapfull=driver.find_element("xpath",'//*[@id="tableTiempos"]/tbody/tr[1]').text.split(")")[1].strip().replace(' META','').replace(' ',';')
+      lastlap=lastlapfull.split(";")[0]
+      lap=open(database,"r").readlines()[-1].split(";")[0]
+      if lastlap > lap:
+        f = open(database,"a")
+        f.write(lastlapfull+"\n")
+        f.close()
+    except:
+      pass
   except:
     pass
   time.sleep(3)
