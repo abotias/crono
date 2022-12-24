@@ -30,11 +30,14 @@ driver.find_element("xpath",'//*[@id="item'+trackn+'"]').click()
 time.sleep(5)
 
 while True:
-  lastlapfull=driver.find_element("xpath",'//*[@id="tableTiempos"]/tbody/tr[1]').text.split(")")[1].strip().replace(' META','').replace(' ',';')
-  lastlap=lastlapfull.split(";")[0]
-  lap=open(database,"r").readlines()[-1].split(";")[0]
-  if lastlap > lap:
-    f = open(database,"a")
-    f.write(lastlapfull+"\n")
-    f.close()
+  try:
+    lastlapfull=driver.find_element("xpath",'//*[@id="tableTiempos"]/tbody/tr[1]').text.split(")")[1].strip().replace(' META','').replace(' ',';')
+    lastlap=lastlapfull.split(";")[0]
+    lap=open(database,"r").readlines()[-1].split(";")[0]
+    if lastlap > lap:
+      f = open(database,"a")
+      f.write(lastlapfull+"\n")
+      f.close()
+  except:
+    pass
   time.sleep(3)
